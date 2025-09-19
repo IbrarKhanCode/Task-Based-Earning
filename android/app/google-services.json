@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "626957767164",
+    "project_id": "task-base-earning",
+    "storage_bucket": "task-base-earning.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:626957767164:android:05217c0dc53d53853f6279",
+        "android_client_info": {
+          "package_name": "com.ibrar.task_base_earning"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuMrL8YGeSnB9J5iD-fxK2mJMq8H2-d7A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

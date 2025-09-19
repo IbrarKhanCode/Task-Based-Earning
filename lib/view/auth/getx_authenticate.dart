@@ -8,6 +8,30 @@ class GetxAuthenticate extends GetxController{
   final passwordController = TextEditingController();
   final RxBool checkBox = false.obs;
 
+  @override
+  void onClose() {
+    emailController.dispose();
+    passwordController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    emailController2.dispose();
+    passwordController2.dispose();
+    confirmPasswordController.dispose();
+    super.onClose();
+  }
+
+  void clearFields(){
+
+    emailController.clear();
+    passwordController.clear();
+    firstNameController.clear();
+    lastNameController.clear();
+    emailController2.clear();
+    passwordController2.clear();
+    confirmPasswordController.clear();
+
+  }
+
   var email = ''.obs;
   var password = ''.obs;
 
@@ -92,28 +116,6 @@ class GetxAuthenticate extends GetxController{
 
     if(value == null || value.isEmpty){
       return 'Enter Your Last Name';
-    }
-    return null;
-  }
-
-  String? validateEmail2(String? value){
-
-    if(value == null || value.isEmpty){
-      return 'Enter Your Email';
-    }
-    if(!value.contains('@')){
-      return 'Invalid Email';
-    }
-    return null;
-  }
-
-  String? validatePassword2(String? value){
-
-    if(value == null || value.isEmpty){
-      return 'Enter Your Password';
-    }
-    if(value.length < 6){
-      return 'Password must be at least 6 digits';
     }
     return null;
   }
