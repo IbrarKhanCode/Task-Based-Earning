@@ -79,6 +79,9 @@ class SignupController extends GetxController{
 
     try{
 
+      await GoogleSignIn().signOut();
+      await auth.signOut();
+
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if(googleUser == null){
@@ -103,7 +106,7 @@ class SignupController extends GetxController{
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      await auth.signInWithCredential(credential);
       Get.snackbar(
         'Congratulation',
         'You have successfully SignIn with Google',
@@ -194,7 +197,7 @@ class SignupController extends GetxController{
     if(value == null || value.isEmpty){
       return 'Enter Your Email';
     }
-    if(regExp.hasMatch(value)){
+    if(!regExp.hasMatch(value)){
       return 'Enter a Valid Email';
     }
     return null;

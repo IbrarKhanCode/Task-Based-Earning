@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_base_earning/utilis/app_colors.dart';
+import 'package:task_base_earning/view/auth/controller/login_controller.dart';
+import 'package:task_base_earning/view/auth/login/login_screen.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -10,6 +13,46 @@ class ForgotPassword extends StatefulWidget {
 }
 
 class _ForgotPasswordState extends State<ForgotPassword> {
+
+  final TextEditingController controller = TextEditingController();
+  FirebaseAuth auth = FirebaseAuth.instance;
+  LoginController loginController = Get.put(LoginController());
+
+  Future<void> resetPassword() async {
+
+    try{
+
+      await auth.sendPasswordResetEmail(email: controller.text.trim());
+      Get.snackbar(
+        'Success',
+        'Password reset email send!Check your email inbox',
+        colorText: Colors.white,
+        backgroundColor: AppColors.primaryColor,
+        animationDuration: Duration(milliseconds: 300),
+        duration: Duration(seconds: 2),
+        borderRadius: 8,
+        borderColor: Colors.cyan,
+        borderWidth: 2,
+      );
+      Get.offAll(LoginScreen());
+
+    } catch (e) {
+
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        colorText: Colors.white,
+        backgroundColor: Colors.red,
+        animationDuration: Duration(milliseconds: 300),
+        duration: Duration(seconds: 2),
+        borderRadius: 8,
+        borderColor: Colors.cyan,
+        borderWidth: 2,
+      );
+
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -57,6 +100,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               SizedBox(height: 10,),
               TextFormField(
+                controller: controller,
                 decoration: InputDecoration(
                   hintText: 'Enter Email',
                   prefixIcon: Icon(Icons.email_outlined,color: Colors.grey,size: 20,),
@@ -77,7 +121,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               ),
               SizedBox(height: h * .37,),
               GestureDetector(
-                onTap: (){},
+                onTap: (){
+                  resetPassword();
+                },
                 child: Container(
                   height: h * .06,
                   width: w,
