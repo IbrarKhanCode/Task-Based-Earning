@@ -12,6 +12,7 @@ class _WalletScreenState extends State<WalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      body: Center(child: Text('Wallet Screen'),),
     );
   }
 }

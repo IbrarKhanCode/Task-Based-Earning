@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_base_earning/utilis/app_colors.dart';
+import 'package:task_base_earning/view/auth/controller/login_controller.dart';
 import 'package:task_base_earning/view/auth/forgot/forgot_password.dart';
-import 'package:task_base_earning/view/auth/getx_authenticate.dart';
 import 'package:task_base_earning/view/auth/sign_up/signup_screen.dart';
-import 'package:task_base_earning/view/home/bottom_view.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
 
-  final GetxAuthenticate controller = Get.put(GetxAuthenticate());
+  final LoginController controller = Get.put(LoginController());
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -28,7 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
       canPop: true,
       onPopInvokedWithResult: (didPop, result){
         if(didPop){
-          controller.clearFields();
+          controller.emailController.clear();
+          controller.passwordController.clear();
         }
       },
       child: Scaffold(
@@ -74,13 +74,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icon(Icons.email_outlined,color: Colors.grey,size: 20,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25),
+                              borderRadius: BorderRadius.circular(30),
                               borderSide: BorderSide(
                                 color: Colors.grey
                               )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: AppColors.primaryColor,
                                 )
@@ -103,13 +103,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: Icon(Icons.lock_open_rounded,color: Colors.grey,size: 20,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: Colors.grey
                                 )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: AppColors.primaryColor,
                                 )
@@ -118,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           onChanged: controller.setPassword,
                           validator: controller.validatePassword,
                         ),
-                        SizedBox(height: 10,),
                         Row(
                           children: [
                             Obx((){
@@ -144,49 +143,28 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 10,),
-                        GestureDetector(
-                          onTap: (){
-                            if(_formKey.currentState!.validate()){
-                              Get.snackbar(
-                                  'Congratulation',
-                                  'You have Successfully Logged In',
-                                colorText: Colors.white,
-                                backgroundColor: AppColors.primaryColor,
-                                animationDuration: Duration(milliseconds: 300),
-                                duration: Duration(seconds: 1),
-                                borderRadius: 8,
-                                borderColor: Colors.cyan,
-                                borderWidth: 2,
-                              );
-                              Get.off(BottomView());
-
-                            }else{
-                              Get.snackbar(
-                                  'Validation',
-                                  'Validation Required',
-                                colorText: Colors.white,
-                                backgroundColor: Colors.red,
-                                animationDuration: Duration(milliseconds: 300),
-                                duration: Duration(seconds: 1),
-                                borderRadius: 8,
-                                borderColor: Colors.cyan,
-                                borderWidth: 2,
-                              );
-                            }
-                          },
-                          child: Container(
-                            height: h * .06,
-                            width: w,
-                            decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(25)
+                        Obx((){
+                          return controller.isLoading.value ? CircularProgressIndicator(
+                            color: AppColors.primaryColor)
+                              : GestureDetector(
+                            onTap: (){
+                              if(_formKey.currentState!.validate()){
+                                controller.login();
+                              }
+                            },
+                            child: Container(
+                              height: h * .06,
+                              width: w,
+                              decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(25)
+                              ),
+                              child: Center(
+                                child: Text('LOG IN',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),),
+                              ),
                             ),
-                            child: Center(
-                              child: Text('LOG IN',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),),
-                            ),
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                 ),
@@ -223,22 +201,27 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 SizedBox(height: 10,),
-                Container(
-                  height: h * .06,
-                  width: w,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(color: AppColors.primaryColor),
-                    borderRadius: BorderRadius.circular(25)
-                  ),
-                  child: Row(
-                    children: [
-                      SizedBox(width: 20,),
-                      Image.asset('assets/images/google.png'),
-                      SizedBox(width: w * 0.13,),
-                      Text('Continue With Google',style: TextStyle(color: AppColors.primaryColor,fontSize: 16,fontWeight: FontWeight.w600),),
+                GestureDetector(
+                  onTap: (){
+                    controller.googleSignIn();
+                  },
+                  child: Container(
+                    height: h * .06,
+                    width: w,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: AppColors.primaryColor),
+                      borderRadius: BorderRadius.circular(25)
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(width: 20,),
+                        Image.asset('assets/images/google.png'),
+                        SizedBox(width: w * 0.13,),
+                        Text('Continue With Google',style: TextStyle(color: AppColors.primaryColor,fontSize: 16,fontWeight: FontWeight.w600),),
 
-                    ],
+                      ],
+                    ),
                   ),
                 )
               ],

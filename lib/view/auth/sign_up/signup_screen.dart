@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_base_earning/utilis/app_colors.dart';
-import 'package:task_base_earning/view/auth/getx_authenticate.dart';
+import 'package:task_base_earning/view/auth/controller/signup_controller.dart';
 import 'package:task_base_earning/view/auth/login/login_screen.dart';
-import 'package:task_base_earning/view/auth/sign_up/verify_otp_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -14,7 +13,7 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
 
-  final controller = Get.put(GetxAuthenticate());
+  final controller = Get.put(SignupController());
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -27,7 +26,11 @@ class _SignupScreenState extends State<SignupScreen> {
       canPop: true,
      onPopInvokedWithResult: (didPop, result){
        if(didPop){
-         controller.clearFields();
+         controller.firstNameController.clear();
+         controller.lastNameController.clear();
+         controller.emailController.clear();
+         controller.passwordController.clear();
+         controller.confirmPasswordController.clear();
        }
      },
       child: Scaffold(
@@ -65,13 +68,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             prefixIcon: Icon(Icons.person_outline,color: Colors.grey,size: 25,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: Colors.grey
                                 )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: AppColors.primaryColor,
                                 )
@@ -83,7 +86,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         SizedBox(height: 10,),
                         Row(
                           children: [
-                            Text('Password',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
+                            Text('Last Name',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
                           ],
                         ),
                         SizedBox(height: 10,),
@@ -94,13 +97,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             prefixIcon: Icon(Icons.person_outline,color: Colors.grey,size: 25,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: Colors.grey
                                 )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: AppColors.primaryColor,
                                 )
@@ -117,25 +120,25 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         SizedBox(height: 10,),
                         TextFormField(
-                          controller: controller.emailController2,
+                          controller: controller.emailController,
                           decoration: InputDecoration(
                             hintText: 'username555@gmail.com',
                             prefixIcon: Icon(Icons.email_outlined,color: Colors.grey,size: 20,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: Colors.grey
                                 )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: AppColors.primaryColor,
                                 )
                             ),
                           ),
-                          onChanged: controller.setEmail2,
+                          onChanged: controller.setEmail,
                           validator: controller.validateEmail,
                         ),
                         SizedBox(height: 10,),
@@ -146,25 +149,25 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         SizedBox(height: 10,),
                         TextFormField(
-                          controller: controller.passwordController2,
+                          controller: controller.passwordController,
                           decoration: InputDecoration(
                             hintText: 'user@123',
                             prefixIcon: Icon(Icons.lock_open_rounded,color: Colors.grey,size: 20,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: Colors.grey
                                 )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: AppColors.primaryColor,
                                 )
                             ),
                           ),
-                          onChanged: controller.setPassword2,
+                          onChanged: controller.setPassword,
                           validator: controller.validatePassword,
                         ),
                         SizedBox(height: 10,),
@@ -181,13 +184,13 @@ class _SignupScreenState extends State<SignupScreen> {
                             prefixIcon: Icon(Icons.lock_open_rounded,color: Colors.grey,size: 20,),
                             hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                     color: Colors.grey
                                 )
                             ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25),
+                                borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide(
                                   color: AppColors.primaryColor,
                                 )
@@ -198,47 +201,29 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         SizedBox(height: 20,),
 
-                        GestureDetector(
-                          onTap: (){
-                            if(_formKey.currentState!.validate()){
-                              Get.snackbar(
-                                  'Congratulation',
-                                  'You have Signed Up',
-                                colorText: Colors.white,
-                                backgroundColor: AppColors.primaryColor,
-                                animationDuration: Duration(milliseconds: 300),
-                                duration: Duration(seconds: 1),
-                                borderRadius: 8,
-                                borderColor: Colors.cyan,
-                                borderWidth: 2,
-                              );
-                              Get.to(VerifyOtpScreen());
-                            }else{
-                              Get.snackbar(
-                                  'Validation',
-                                'Validation Required',
-                                colorText: Colors.white,
-                                backgroundColor: Colors.red,
-                                animationDuration: Duration(milliseconds: 300),
-                                duration: Duration(seconds: 1),
-                                borderRadius: 8,
-                                borderColor: Colors.cyan,
-                                borderWidth: 2,
-                              );
-                            }
-                          },
-                          child: Container(
-                            height: h * .06,
-                            width: w,
-                            decoration: BoxDecoration(
-                                color: AppColors.primaryColor,
-                                borderRadius: BorderRadius.circular(25)
+                        Obx((){
+                          return controller.isLoading.value ? CircularProgressIndicator(
+                            color: AppColors.primaryColor,
+                          )
+                              : GestureDetector(
+                            onTap: (){
+                              if(_formKey.currentState!.validate()){
+                                controller.signUp();
+                              }
+                            },
+                            child: Container(
+                              height: h * .06,
+                              width: w,
+                              decoration: BoxDecoration(
+                                  color: AppColors.primaryColor,
+                                  borderRadius: BorderRadius.circular(25)
+                              ),
+                              child: Center(
+                                child: Text('SIGN UP',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),),
+                              ),
                             ),
-                            child: Center(
-                              child: Text('SIGN UP',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 16),),
-                            ),
-                          ),
-                        ),
+                          );
+                        }),
                         SizedBox(height: 10,),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -272,22 +257,27 @@ class _SignupScreenState extends State<SignupScreen> {
                           ],
                         ),
                         SizedBox(height: 10,),
-                        Container(
-                          height: h * .06,
-                          width: w,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(color: AppColors.primaryColor),
-                              borderRadius: BorderRadius.circular(25)
-                          ),
-                          child: Row(
-                            children: [
-                              SizedBox(width: 20,),
-                              Image.asset('assets/images/google.png'),
-                              SizedBox(width: w * 0.13,),
-                              Text('Continue With Google',style: TextStyle(color: AppColors.primaryColor,fontSize: 16,fontWeight: FontWeight.w600),),
+                        GestureDetector(
+                          onTap: (){
+                            controller.googleSignUp();
+                          },
+                          child: Container(
+                            height: h * .06,
+                            width: w,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: AppColors.primaryColor),
+                                borderRadius: BorderRadius.circular(25)
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(width: 20,),
+                                Image.asset('assets/images/google.png'),
+                                SizedBox(width: w * 0.13,),
+                                Text('Continue With Google',style: TextStyle(color: AppColors.primaryColor,fontSize: 16,fontWeight: FontWeight.w600),),
 
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: 30,),

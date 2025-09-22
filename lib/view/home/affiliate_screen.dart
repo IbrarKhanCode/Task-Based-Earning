@@ -12,6 +12,7 @@ class _AffiliateScreenState extends State<AffiliateScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      body: Center(child: Text('Affiliate Screen'),),
     );
   }
 }

@@ -12,6 +12,7 @@ class _LevelScreenState extends State<LevelScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      body: Center(child: Text('Level Screen'),),
     );
   }
 }
