@@ -13,6 +13,11 @@ class AffiliateScreen extends StatefulWidget {
 class _AffiliateScreenState extends State<AffiliateScreen> {
 
   final HomeController controller = Get.put(HomeController());
+  final List<String> texts = [
+    'Today',
+    'Weekly',
+    'Monthly',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,73 +40,45 @@ class _AffiliateScreenState extends State<AffiliateScreen> {
                 width: w,
                 decoration: BoxDecoration(
                   color: Colors.grey.shade100,
-                  borderRadius: BorderRadius.circular(30)
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: Row(
-                  children: [
-                    controller.selectedIndex.value == 0 ? SizedBox() : SizedBox(width: w * 0.1,),
-                    GestureDetector(
-                      onTap : (){
-                        controller.selectedIndex.value = 0;
-                      },
-                      child: controller.selectedIndex.value == 0 ? Container(
-                        height: h * .06,
-                        width: w * .27,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(30)
-                        ),
-                        child: Center(child: Text('Today',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 14),)),
-                      ) : Text('Today',style: TextStyle(color: AppColors.secondaryColor,fontSize: 14,fontWeight: FontWeight.w500),)
-                    ),
-                    controller.selectedIndex.value == 1 ? SizedBox(width: w * 0.12,) : SizedBox(width: w * 0.15,),
-                    GestureDetector(
-                      onTap : (){
-                        setState(() {
-                          controller.selectedIndex.value = 1;
-                        });
-                      },
-                      child: controller.selectedIndex.value == 1 ? Container(
-                        height: h * .06,
-                        width: w * .27,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Center(child: Text('Weekly',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 14),)),
-                      ) : Text('Weekly',style: TextStyle(color: AppColors.secondaryColor,fontSize: 14,fontWeight: FontWeight.w500),)
-                    ),
-                    controller.selectedIndex.value == 2 ? SizedBox(width: w * 0.15,) : SizedBox(width: w * 0.1,),
-                    GestureDetector(
-                      onTap : (){
-                        setState(() {
-                          controller.selectedIndex.value = 2;
-                        });
-                      },
-                      child: controller.selectedIndex.value == 2 ? Container(
-                        height: h * .06,
-                        width: w * .27,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Center(child: Text('Monthly',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w500,fontSize: 14),)),
-                      ) : Text('Monthly',style: TextStyle(color: AppColors.secondaryColor,fontSize: 14,fontWeight: FontWeight.w500),)
-                    ),
-                  ],
-                ),
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: texts.length,
+                    itemBuilder: (context,index){
+                      return Obx((){
+                        bool isSelected = controller.selectedIndex.value == index;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10,left: 5),
+                          child: GestureDetector(
+                            onTap : (){
+                              controller.selectedContainer(index);
+                            },
+                            child: Container(
+                              height: h * .06,
+                              width: w * .27,
+                              decoration: BoxDecoration(
+                                color: isSelected ? AppColors.primaryColor : Colors.transparent,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Center(child: Text(texts[index],style: TextStyle(color: isSelected ? Colors.white : AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 14),)),
+                            ),
+                          ),
+                        );
+                      });
+                    }),
               ),
-              controller.selectedIndex.value == 0 ?
-
-                  Column(
+              Obx((){
+                if(controller.selectedIndex.value == 0){
+                  return Column(
                     children: [
                       SizedBox(height: 10,),
                       Container(
                         height: h * .15,
                         width: w,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(15)
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(15)
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -155,8 +132,8 @@ class _AffiliateScreenState extends State<AffiliateScreen> {
                         height: h * .35,
                         width: w,
                         decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(15)
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(15)
                         ),
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -176,23 +153,23 @@ class _AffiliateScreenState extends State<AffiliateScreen> {
                               Row(
                                 children: [
                                   Text('Referral Code',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14),),
-        
+
                                 ],
                               ),
                               TextField(
                                 decoration: InputDecoration(
-                                  hintText: 'https://link.abc.com',
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  hintStyle: TextStyle(color: Colors.grey,fontSize: 13,fontWeight: FontWeight.w400),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.only(right: 30,top: 10),
-                                    child: Text('Copy',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 13),),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                    borderSide: BorderSide(color: Colors.grey),
-                                  ),
+                                    hintText: 'https://link.abc.com',
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    hintStyle: TextStyle(color: Colors.grey,fontSize: 13,fontWeight: FontWeight.w400),
+                                    suffixIcon: Padding(
+                                      padding: const EdgeInsets.only(right: 30,top: 10),
+                                      child: Text('Copy',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 13),),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(color: Colors.grey),
+                                    ),
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(30),
                                       borderSide: BorderSide(color: AppColors.primaryColor),
@@ -203,17 +180,17 @@ class _AffiliateScreenState extends State<AffiliateScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                   Container(
-                                     height: h * .06,
-                                     width: w * .13,
-                                     decoration: BoxDecoration(
-                                       color: Colors.white,
-                                       shape: BoxShape.circle
-                                     ),
-                                     child: Center(
-                                       child: Image.asset('assets/images/whatsapp.png'),
-                                     ),
-                                   ),
+                                  Container(
+                                    height: h * .06,
+                                    width: w * .13,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: Center(
+                                      child: Image.asset('assets/images/whatsapp.png'),
+                                    ),
+                                  ),
                                   SizedBox(width: 20,),
                                   Container(
                                     height: h * .06,
@@ -233,317 +210,317 @@ class _AffiliateScreenState extends State<AffiliateScreen> {
                         ),
                       ),
                     ],
-                  )
-
-                  : controller.selectedIndex.value == 1 ?
-
-              Column(
-                children: [
-                  SizedBox(height: 10,),
-                  Container(
-                    height: h * .25,
-                    width: w,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(15)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Mon',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+50\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Tue',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+70\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Wed',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+40\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Thu',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Fri',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Sat',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Sun',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
+                  );
+                } else if(controller.selectedIndex.value == 1){
+                  return Column(
                     children: [
-                      Text('Invite Friends with Your Referral Code :',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),),
+                      SizedBox(height: 10,),
+                      Container(
+                        height: h * .25,
+                        width: w,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Mon',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+50\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Tue',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+70\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Wed',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+40\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Thu',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Fri',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Sat',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Sun',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20,),
+                      Row(
+                        children: [
+                          Text('Invite Friends with Your Referral Code :',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),),
+                        ],
+                      ),
+                      SizedBox(height: 10,),
+                      Container(
+                        height: h * .35,
+                        width: w,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20,),
+                              Container(
+                                height: h * .13,
+                                width: w * .3,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Image.asset('assets/images/qr.png'),
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Referral Code',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14),),
+
+                                ],
+                              ),
+                              TextField(
+                                decoration: InputDecoration(
+                                    hintText: 'https://link.abc.com',
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    hintStyle: TextStyle(color: Colors.grey,fontSize: 13,fontWeight: FontWeight.w400),
+                                    suffixIcon: Padding(
+                                      padding: const EdgeInsets.only(right: 30,top: 10),
+                                      child: Text('Copy',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 13),),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(color: Colors.grey),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(color: AppColors.primaryColor),
+                                    )
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: h * .06,
+                                    width: w * .13,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: Center(
+                                      child: Image.asset('assets/images/whatsapp.png'),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20,),
+                                  Container(
+                                    height: h * .06,
+                                    width: w * .13,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: Center(
+                                      child: Image.asset('assets/images/share.png'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
-                  ),
-                  SizedBox(height: 10,),
-                  Container(
-                    height: h * .35,
-                    width: w,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(15)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20,),
-                          Container(
-                            height: h * .13,
-                            width: w * .3,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Image.asset('assets/images/qr.png'),
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Referral Code',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14),),
-
-                            ],
-                          ),
-                          TextField(
-                            decoration: InputDecoration(
-                                hintText: 'https://link.abc.com',
-                                fillColor: Colors.white,
-                                filled: true,
-                                hintStyle: TextStyle(color: Colors.grey,fontSize: 13,fontWeight: FontWeight.w400),
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(right: 30,top: 10),
-                                  child: Text('Copy',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 13),),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide(color: AppColors.primaryColor),
-                                )
-                            ),
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: h * .06,
-                                width: w * .13,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                  child: Image.asset('assets/images/whatsapp.png'),
-                                ),
-                              ),
-                              SizedBox(width: 20,),
-                              Container(
-                                height: h * .06,
-                                width: w * .13,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                  child: Image.asset('assets/images/share.png'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-
-                  : Column(
-                children: [
-                  SizedBox(height: 10,),
-                  Container(
-                    height: h * .15,
-                    width: w,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(15)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Week #1',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+50\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Week #2',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+70\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Week #3',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+40\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Week #4',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
-                              Spacer(),
-                              Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  Row(
+                  );
+                } else{
+                  return Column(
                     children: [
-                      Text('Invite Friends with Your Referral Code :',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),),
-                    ],
-                  ),
-                  SizedBox(height: 10,),
-                  Container(
-                    height: h * .35,
-                    width: w,
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(15)
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(
+                      SizedBox(height: 10,),
+                      Container(
+                        height: h * .15,
+                        width: w,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Week #1',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+50\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Week #2',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+70\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Week #3',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+40\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Week #4',style: TextStyle(color: AppColors.secondaryColor,fontWeight: FontWeight.w500,fontSize: 12),),
+                                  Spacer(),
+                                  Text('+60\$',style: TextStyle(color: AppColors.primaryColor,fontSize: 12,fontWeight: FontWeight.w500),)
+                                ],
+                              ),
+                              SizedBox(height: 10,),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 20,),
+                      Row(
                         children: [
-                          SizedBox(height: 20,),
-                          Container(
-                            height: h * .13,
-                            width: w * .3,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Image.asset('assets/images/qr.png'),
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Text('Referral Code',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14),),
-
-                            ],
-                          ),
-                          TextField(
-                            decoration: InputDecoration(
-                                hintText: 'https://link.abc.com',
-                                fillColor: Colors.white,
-                                filled: true,
-                                hintStyle: TextStyle(color: Colors.grey,fontSize: 13,fontWeight: FontWeight.w400),
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.only(right: 30,top: 10),
-                                  child: Text('Copy',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 13),),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide(color: Colors.grey),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                  borderSide: BorderSide(color: AppColors.primaryColor),
-                                )
-                            ),
-                          ),
-                          SizedBox(height: 10,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                height: h * .06,
-                                width: w * .13,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                  child: Image.asset('assets/images/whatsapp.png'),
-                                ),
-                              ),
-                              SizedBox(width: 20,),
-                              Container(
-                                height: h * .06,
-                                width: w * .13,
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle
-                                ),
-                                child: Center(
-                                  child: Image.asset('assets/images/share.png'),
-                                ),
-                              ),
-                            ],
-                          ),
+                          Text('Invite Friends with Your Referral Code :',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),),
                         ],
                       ),
-                    ),
-                  ),
-                ],
-              ),
+                      SizedBox(height: 10,),
+                      Container(
+                        height: h * .35,
+                        width: w,
+                        decoration: BoxDecoration(
+                            color: Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(15)
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 20,),
+                              Container(
+                                height: h * .13,
+                                width: w * .3,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Image.asset('assets/images/qr.png'),
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                children: [
+                                  Text('Referral Code',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 14),),
+
+                                ],
+                              ),
+                              TextField(
+                                decoration: InputDecoration(
+                                    hintText: 'https://link.abc.com',
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    hintStyle: TextStyle(color: Colors.grey,fontSize: 13,fontWeight: FontWeight.w400),
+                                    suffixIcon: Padding(
+                                      padding: const EdgeInsets.only(right: 30,top: 10),
+                                      child: Text('Copy',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 13),),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(color: Colors.grey),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                      borderSide: BorderSide(color: AppColors.primaryColor),
+                                    )
+                                ),
+                              ),
+                              SizedBox(height: 10,),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    height: h * .06,
+                                    width: w * .13,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: Center(
+                                      child: Image.asset('assets/images/whatsapp.png'),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20,),
+                                  Container(
+                                    height: h * .06,
+                                    width: w * .13,
+                                    decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle
+                                    ),
+                                    child: Center(
+                                      child: Image.asset('assets/images/share.png'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }),
             ],
           ),
         ),
