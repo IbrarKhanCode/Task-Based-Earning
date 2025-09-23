@@ -1,8 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:task_base_earning/utilis/app_colors.dart';
 import 'package:task_base_earning/view/home/bottom_view.dart';
 
 class SignupController extends GetxController{
@@ -27,17 +27,31 @@ class SignupController extends GetxController{
 
     try{
 
-      await auth.createUserWithEmailAndPassword(
+       UserCredential userCredential = await auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
+
+       User? user = userCredential.user;
+       if(user != null){
+
+         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+
+           'firstName' : firstNameController.text.trim(),
+           'lastName' : lastNameController.text.trim(),
+           'email' : emailController.text.trim(),
+           'createAt' : DateTime.now(),
+
+         });
+
+       }
 
       isLoading.value = false;
       Get.snackbar(
         'Congratulation',
         'You are Signed Up',
         colorText: Colors.white,
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: Colors.green,
         animationDuration: Duration(milliseconds: 300),
         duration: Duration(seconds: 2),
         borderRadius: 8,
@@ -49,20 +63,20 @@ class SignupController extends GetxController{
     } on FirebaseAuthException catch (e){
 
       isLoading.value = false;
-      String message2 = "Something went wrong";
+      String message = "Something went wrong";
 
       if (e.code == 'email-already-in-use') {
-        message2 = "This email is already registered.";
+        message = "This email is already registered.";
       } else if (e.code == 'invalid-email') {
-        message2 = "Invalid email format.";
+        message = "Invalid email format.";
       } else if (e.code == 'weak-password') {
-        message2 = "Password is too weak. Try a stronger one.";
+        message = "Password is too weak. Try a stronger one.";
       } else if (e.message != null) {
-        message2 = e.message!;
+        message = e.message!;
       }
       Get.snackbar(
         'SignUp Failed',
-        message2,
+        message,
         colorText: Colors.white,
         backgroundColor: Colors.red,
         animationDuration: Duration(milliseconds: 300),
@@ -111,7 +125,7 @@ class SignupController extends GetxController{
         'Congratulation',
         'You have successfully SignIn with Google',
         colorText: Colors.white,
-        backgroundColor: AppColors.primaryColor,
+        backgroundColor: Colors.green,
         animationDuration: Duration(milliseconds: 300),
         duration: Duration(seconds: 2),
         borderRadius: 8,
@@ -141,8 +155,8 @@ class SignupController extends GetxController{
 
   var firstName = ''.obs;
   var lastName = ''.obs;
-  var email2 = ''.obs;
-  var password2 = ''.obs;
+  var email = ''.obs;
+  var password = ''.obs;
   var confirmPassword = ''.obs;
 
   void setFirstName(String value){
@@ -154,11 +168,11 @@ class SignupController extends GetxController{
   }
 
   void setEmail(String value){
-    email2.value = value;
+    email.value = value;
   }
 
   void setPassword(String value){
-    password2.value = value;
+    password.value = value;
   }
 
   void setConfirmPassword(String value){
