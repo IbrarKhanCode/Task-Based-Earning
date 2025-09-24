@@ -34,7 +34,6 @@ class _SignupScreenState extends State<SignupScreen> {
        }
      },
       child: Scaffold(
-        backgroundColor: Colors.white,
 
         body: SingleChildScrollView(
           child: Column(

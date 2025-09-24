@@ -1,22 +1,19 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_base_earning/utilis/app_colors.dart';
-import 'package:task_base_earning/view/controller/home_controller.dart';
+import 'package:task_base_earning/view/controller/password_controller.dart';
 
-class PersonalInfoScreen extends StatefulWidget {
-  const PersonalInfoScreen({super.key});
+class PasswordSecurityScreen extends StatefulWidget {
+  const PasswordSecurityScreen({super.key});
 
   @override
-  State<PersonalInfoScreen> createState() => _PersonalInfoScreenState();
+  State<PasswordSecurityScreen> createState() => _PasswordSecurityScreenState();
 }
 
-class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
+class _PasswordSecurityScreenState extends State<PasswordSecurityScreen> {
 
   final _formKey = GlobalKey<FormState>();
-  final user = FirebaseAuth.instance.currentUser;
-  final controller = Get.put(HomeController());
+  final controller = Get.put(PasswordController());
 
   @override
   Widget build(BuildContext context) {
@@ -26,84 +23,48 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
 
     return PopScope(
       canPop: true,
-      onPopInvokedWithResult: (didPop, result){
+      onPopInvokedWithResult: (didPop,result){
         if(didPop){
-          controller.firstNameController.clear();
-          controller.lastNameController.clear();
-          controller.emailController.clear();
+          controller.oldPasswordController.clear();
+          controller.newPasswordController.clear();
+          controller.confirmPasswordController.clear();
         }
       },
       child: Scaffold(
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: [
-                SizedBox(height: h * .05,),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: (){
-                        Get.back();
-                      },
-                      icon: Icon(Icons.arrow_back,),
-                    ),
-                    Text('Personal Information',style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w600),),
-                  ],
-                ),
-                SizedBox(height: 20,),
-                CircleAvatar(
-                  backgroundImage: AssetImage('assets/images/Profile.png'),
-                  radius: 40,
-                ),
-                SizedBox(height: 10,),
-                StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
-                    builder: (context,snapshot){
-                      if(!snapshot.hasData || !snapshot.data!.exists){
-                        return Center(child: Text('User has no data'));
-                      }
-                      var userData = snapshot.data!.data() as Map<String, dynamic>?;
-                      if(userData == null || userData.isEmpty){
-                        return Center(child: Text('User has no data'));
-                      }
-                      bool isGoogleLogin = !(userData.containsKey('firstName') && userData.containsKey('lastName'));
-                      return
-                        Column(
-                          children: [
-                            isGoogleLogin ?
-                            Text(userData['email'],style: TextStyle(color: Colors.black,fontSize: 15,fontWeight: FontWeight.w500))
-                                : Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(userData['firstName'],style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),),
-                                    SizedBox(width: 5,),
-                                    Text(userData['lastName'],style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),),
-                                  ],
-                                ),
-                                Text(userData['email'],style: TextStyle(color: Colors.grey,fontSize: 12,fontWeight: FontWeight.w500),),
-                              ],
-                            ),
-                          ],
-                        );
-                    }),
-                SizedBox(height: 10,),
-                Form(
-                  key: _formKey,
+          child: Column(
+            children: [
+              SizedBox(height: h * .05,),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: (){
+                      Get.back();
+                    },
+                    icon: Icon(Icons.arrow_back,),
+                  ),
+                  Text('Change Password',style: TextStyle(color: Colors.black,fontSize: 16,fontWeight: FontWeight.w600),),
+                ],
+              ),
+              SizedBox(height: h * .05,),
+              Image.asset('assets/images/lock.png'),
+              SizedBox(height: h * .05,),
+              Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
                       Row(
                         children: [
-                          Text('First Name',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
+                          Text('Old Password',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
                         ],
                       ),
                       SizedBox(height: 10,),
                       TextFormField(
-                        controller: controller.firstNameController,
+                        controller: controller.oldPasswordController,
                         decoration: InputDecoration(
-                          hintText: 'Enter Your First Name',
+                          hintText: 'Enter Password',
                           prefixIcon: Icon(Icons.person_outline,color: Colors.grey,),
                           hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                           enabledBorder: OutlineInputBorder(
@@ -119,20 +80,20 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               )
                           ),
                         ),
-                        onChanged: controller.setFirstName,
-                        validator: controller.validateFirstName,
+                        onChanged: controller.setOldPassword,
+                        validator: controller.validateOldPassword,
                       ),
                       SizedBox(height: 10,),
                       Row(
                         children: [
-                          Text('Last Name',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
+                          Text('Create New Password',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
                         ],
                       ),
                       SizedBox(height: 10,),
                       TextFormField(
-                        controller: controller.lastNameController,
+                        controller: controller.newPasswordController,
                         decoration: InputDecoration(
-                          hintText: 'Enter Your Last Name',
+                          hintText: 'Enter Password',
                           prefixIcon: Icon(Icons.person_outline,color: Colors.grey,),
                           hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                           enabledBorder: OutlineInputBorder(
@@ -148,20 +109,20 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               )
                           ),
                         ),
-                        onChanged: controller.setLastName,
-                        validator: controller.validateLastName,
+                        onChanged: controller.setNewPassword,
+                        validator: controller.validateNewPassword,
                       ),
                       SizedBox(height: 10,),
                       Row(
                         children: [
-                          Text('Email',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
+                          Text('Confirm New Password',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500),)
                         ],
                       ),
                       SizedBox(height: 10,),
                       TextFormField(
-                        controller: controller.emailController,
+                        controller: controller.confirmPasswordController,
                         decoration: InputDecoration(
-                          hintText: 'username555@gmail.com',
+                          hintText: 'Enter Password',
                           prefixIcon: Icon(Icons.email_outlined,color: Colors.grey,),
                           hintStyle: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.w400),
                           enabledBorder: OutlineInputBorder(
@@ -177,14 +138,14 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                               )
                           ),
                         ),
-                        onChanged: controller.setEmail,
-                        validator: controller.validateEmail,
+                        onChanged: controller.setConfirmPassword,
+                        validator: controller.validateConfirmPassword,
                       ),
                       SizedBox(height: h * .3),
                       GestureDetector(
                         onTap: (){
                           if(_formKey.currentState!.validate()){
-                            controller.updateProfile();
+                            controller.updatePassword();
                           }
                         },
                         child: Container(
@@ -202,8 +163,8 @@ class _PersonalInfoScreenState extends State<PersonalInfoScreen> {
                     ],
                   ),
                 ),
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),

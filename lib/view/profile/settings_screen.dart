@@ -3,7 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:task_base_earning/utilis/app_colors.dart';
+import 'package:task_base_earning/utilis/theme/theme_controller.dart';
+import 'package:task_base_earning/view/auth/login/login_screen.dart';
 import 'package:task_base_earning/view/controller/home_controller.dart';
+import 'package:task_base_earning/view/profile/password_security_screen.dart';
 import 'package:task_base_earning/view/profile/personal_info_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -16,7 +19,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
 
   final user = FirebaseAuth.instance.currentUser;
-  final controller = Get.put(HomeController());
+  final controller = Get.put(ThemeController());
+  final homeController = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     double w = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -52,10 +55,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               StreamBuilder<DocumentSnapshot>(
                   stream: FirebaseFirestore.instance.collection('users').doc(user!.uid).snapshots(),
                   builder: (context,snapshot){
-                    if(!snapshot.hasData){
-                      return Center(child: CircularProgressIndicator(),);
+                    if(!snapshot.hasData || !snapshot.data!.exists){
+                     return Center(child: Text('User has no data'),);
                     }
-                    var userData = snapshot.data!.data() as Map<String, dynamic>;
+                    var userData = snapshot.data!.data() as Map<String, dynamic>?;
+                    if(userData == null || userData.isEmpty){
+                      return Center(child: Text('User has no data'));
+                    }
                     bool isGoogleLogin = !(userData.containsKey('firstName') && userData.containsKey('lastName'));
                 return
                   Column(
@@ -110,29 +116,34 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
               SizedBox(height: 10,),
-              Container(
-                height: h * 0.07,
-                width: w,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(width: 20,),
-                    Image.asset('assets/images/security.png'),
-                    SizedBox(width: 20,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10,),
-                        Text('Password & Security',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),),
-                        Text('Change & forget your account password',style: TextStyle(color: Colors.grey,fontSize: 10,fontWeight: FontWeight.w500),),
+              GestureDetector(
+                onTap: (){
+                  Get.to(PasswordSecurityScreen());
+                },
+                child: Container(
+                  height: h * 0.07,
+                  width: w,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 20,),
+                      Image.asset('assets/images/security.png'),
+                      SizedBox(width: 20,),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 10,),
+                          Text('Password & Security',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600,fontSize: 14),),
+                          Text('Change & forget your account password',style: TextStyle(color: Colors.grey,fontSize: 10,fontWeight: FontWeight.w500),),
 
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 10,),
@@ -160,11 +171,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     Row(
                                       children: [
                                         Radio<int>(
-                                            value: 1,
+                                            value: 0,
                                             activeColor: Colors.black,
-                                            groupValue: controller.selectedRadio.value,
+                                            groupValue: controller.selectedTheme.value,
                                             onChanged: (val) {
-                                              controller.tapRadio(val!);
+                                              controller.changeTheme(val!);
                                             },
                                         ),
                                         Text('System',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),)
@@ -173,11 +184,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     Row(
                                       children: [
                                         Radio<int>(
-                                          value: 2,
+                                          value: 1,
                                           activeColor: Colors.black,
-                                          groupValue: controller.selectedRadio.value,
+                                          groupValue: controller.selectedTheme.value,
                                           onChanged: (val) {
-                                            controller.tapRadio(val!);
+                                            controller.changeTheme(val!);
                                           },
                                         ),
                                         Text('Light Mode',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),)
@@ -186,11 +197,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     Row(
                                       children: [
                                         Radio<int>(
-                                          value: 3,
+                                          value: 2,
                                           activeColor: Colors.black,
-                                          groupValue: controller.selectedRadio.value,
+                                          groupValue: controller.selectedTheme.value,
                                           onChanged: (val) {
-                                            controller.tapRadio(val!);
+                                            controller.changeTheme(val!);
                                           },
                                         ),
                                         Text('Dark Mode',style: TextStyle(color: Colors.black,fontWeight: FontWeight.w500,fontSize: 12),)
@@ -263,28 +274,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                   ),
                                   SizedBox(height: 20,),
-                                  Container(
-                                    height: h * .06,
-                                    width: w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 18),),
+                                  GestureDetector(
+                                    onTap: (){
+                                      homeController.deleteProfile();
+                                    },
+                                    child: Container(
+                                      height: h * .06,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryColor,
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 18),),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: 10,),
-                                  Container(
-                                    height: h * .06,
-                                    width: w,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(color: AppColors.primaryColor),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text('No',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 18),),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Get.back();
+                                    },
+                                    child: Container(
+                                      height: h * .06,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(color: AppColors.primaryColor),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Text('No',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 18),),
+                                      ),
                                     ),
                                   )
                                 ],
@@ -345,28 +366,38 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   ),
                                   ),
                                   SizedBox(height: 20,),
-                                  Container(
-                                    height: h * .06,
-                                    width: w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryColor,
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 18),),
-                                    ),
+                                  GestureDetector(
+                                onTap: (){
+                                  Get.offAll(LoginScreen());
+                                },
+                                child: Container(
+                                  height: h * .06,
+                                  width: w,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryColor,
+                                    borderRadius: BorderRadius.circular(5),
                                   ),
+                                  child: Center(
+                                    child: Text('Yes',style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600,fontSize: 18),),
+                                  ),
+                                ),
+                              ),
                                   SizedBox(height: 10,),
-                                  Container(
-                                    height: h * .06,
-                                    width: w,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(color: AppColors.primaryColor),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Center(
-                                      child: Text('No',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 18),),
+                                  GestureDetector(
+                                    onTap: (){
+                                      Get.back();
+                                    },
+                                    child: Container(
+                                      height: h * .06,
+                                      width: w,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        border: Border.all(color: AppColors.primaryColor),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: Center(
+                                        child: Text('No',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 18),),
+                                      ),
                                     ),
                                   )
                                 ],

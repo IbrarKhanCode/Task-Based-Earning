@@ -2,12 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:task_base_earning/view/auth/login/login_screen.dart';
 
 class HomeController extends GetxController{
 
   final RxInt currentIndex = 0.obs;
   RxInt selectedIndex = 0.obs;
-  var selectedRadio = 0.obs;
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
   final emailController = TextEditingController();
@@ -68,13 +68,8 @@ class HomeController extends GetxController{
     selectedIndex.value = index;
   }
 
-  void tapRadio(int value){
-
-    selectedRadio.value = value;
-
-  }
-
   Future<void> updateProfile() async {
+
 
     try{
 
@@ -87,19 +82,22 @@ class HomeController extends GetxController{
           'lastName': lastNameController.text.trim(),
           'createAt': DateTime.now(),
         }, SetOptions(merge: true),
-        );}
-      Get.snackbar(
-        'Congratulation',
-        'You have updated the data',
-        colorText: Colors.white,
-        backgroundColor: Colors.green,
-        animationDuration: Duration(milliseconds: 300),
-        duration: Duration(seconds: 2),
-        borderRadius: 8,
-        borderColor: Colors.cyan,
-        borderWidth: 2,
-      );
-      Get.back();
+        );
+        Get.snackbar(
+          'Verify Email',
+          'A verification link has send to your new email.Please verify that before updating',
+          colorText: Colors.white,
+          backgroundColor: Colors.green,
+          animationDuration: Duration(milliseconds: 300),
+          duration: Duration(seconds: 2),
+          borderRadius: 8,
+          borderColor: Colors.cyan,
+          borderWidth: 2,
+        );
+        Future.delayed(Duration(seconds: 3),(){
+          Get.back();
+        });
+      }
 
     }catch (e){
 
@@ -115,6 +113,47 @@ class HomeController extends GetxController{
         borderWidth: 2,
       );
 
+    }
+
+  }
+
+  Future<void> deleteProfile() async {
+
+    try{
+      User? user = auth.currentUser;
+      if(user != null){
+        final uid = user.uid;
+        await FirebaseFirestore.instance.collection('users').doc(uid).delete();
+        await user.delete();
+        Get.snackbar(
+          'Delete Account',
+          'Your Account has been deleted successfully',
+          colorText: Colors.white,
+          backgroundColor: Colors.green,
+          animationDuration: Duration(milliseconds: 300),
+          duration: Duration(seconds: 2),
+          borderRadius: 8,
+          borderColor: Colors.cyan,
+          borderWidth: 2,
+        );
+        Future.delayed(Duration(seconds: 3),(){
+          Get.offAll(LoginScreen());
+        });
+      }
+
+
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString(),
+        colorText: Colors.white,
+        backgroundColor: Colors.red,
+        animationDuration: Duration(milliseconds: 300),
+        duration: Duration(seconds: 2),
+        borderRadius: 8,
+        borderColor: Colors.cyan,
+        borderWidth: 2,
+      );
     }
 
   }

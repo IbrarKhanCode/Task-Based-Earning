@@ -93,8 +93,6 @@ class SignupController extends GetxController{
 
     try{
 
-      await GoogleSignIn().signOut();
-      await auth.signOut();
 
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
